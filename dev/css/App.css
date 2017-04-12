@@ -1,0 +1,13 @@
+.product-list{
+    margin-top: 10%;
+}
+.card{
+   float: left;
+    display: inline;
+}
+.footer{
+    border-top: 1px solid gray;
+}
+.panelBottom{
+    margin-top: 20px;
+}

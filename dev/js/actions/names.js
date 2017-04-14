@@ -7,3 +7,4 @@ export const SHOW_DELETE_MODAL = 'show_delete_modal';
 export const REMOVE_ARRAY_PRODUCT = 'remove_array_product';
 export const SELECT_PRODUCT = 'select_product';
 export const CLOSE_MODAL = 'close_modal';
+export const DESELECT_PRODUCT = 'deselect_product';

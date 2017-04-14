@@ -14,6 +14,7 @@ import {
    editProduct,
    showDeleteModal,
    removeArrayProduct,
+   deselectProduct,
 } from '../../actions';
 
 class ProductList extends React.Component {
@@ -93,7 +94,7 @@ class ProductList extends React.Component {
 
     _editButton(){
         return (
-            <button className='btn btn-success' onClick={() => {this.closeModal(); this.saveProduct()}}>Save</button>
+            <button className='btn btn-success' onClick={() => {this.saveProduct(); this.closeModal(); }}>Save</button>
         );
     }
 
@@ -106,7 +107,7 @@ class ProductList extends React.Component {
     render(){
         return(
          <span>
-             <button className="btn btn-success btn-add" onClick={() => this.props.showAddModal()} ><span className="glyphicon glyphicon-plus"></span> Add Product</button>
+             <button className="btn btn-success btn-add" onClick={() => {this.props.showAddModal();}} ><span className="glyphicon glyphicon-plus"></span> Add Product</button>
              <br />
              <br />
              {this.props.products.map((product) =>
@@ -139,6 +140,7 @@ class ProductList extends React.Component {
     /* close the modal on button click */
     closeModal() {
         this.props.closeModal();
+        this.props.deselectProduct();
     }
 
     /* deleting a selected product
@@ -194,11 +196,11 @@ class ProductList extends React.Component {
         }
         //new product
         else{
-            let id= this.getMaxId();
+            let maxId= this.getMaxId()+1;
             if(maxId==0)
                 return;
 
-            let newProduct= new Product(id,name,description,price,created_on);
+            let newProduct= new Product(maxId,name,description,price,created_on);
             if(newProduct.name!='')
              this.props.addProduct(newProduct);
         }
@@ -216,12 +218,12 @@ class ProductList extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        products: state.products,
-        selectedProduct: state.selectedProduct,
-        addModal: state.addModal,
-        detailsModal: state.detailsModal,
-        deleteModal: state.deleteModal,
-        editModal: state.editModal,
+        products: state.product.products,
+        selectedProduct: state.product.selectedProduct,
+        addModal: state.modals.addModal,
+        detailsModal: state.modals.detailsModal,
+        deleteModal: state.modals.deleteModal,
+        editModal: state.modals.editModal,
     };
 };
 
@@ -250,6 +252,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         selectStateProduct: (product) => {
             dispatch(selectStateProduct(product));
+        },
+        deselectProduct: () => {
+            dispatch(deselectProduct());
         },
         closeModal: () => {
             dispatch(closeModal());

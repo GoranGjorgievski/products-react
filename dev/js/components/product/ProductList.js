@@ -5,11 +5,15 @@ import Product from './Product';
 import Modal from 'react-modal';
 
 import {
+   showAddModal,
+   addProduct,
    showDetailsModal,
    selectStateProduct,
    closeModal,
    showEditModal,
+   editProduct,
    showDeleteModal,
+   removeArrayProduct,
 } from '../../actions';
 
 class ProductList extends React.Component {
@@ -45,7 +49,7 @@ class ProductList extends React.Component {
                         Name
                     </td>
                     <td>
-                        <input className="form-control" type="text" defaultValue={this.props.selectedProduct.name} />
+                        <input ref="name" className="form-control" type="text" defaultValue={this.props.selectedProduct.name} />
                     </td>
                 </tr>
                 <tr>
@@ -53,7 +57,7 @@ class ProductList extends React.Component {
                         Description
                     </td>
                     <td>
-                        <input className="form-control" type="text" defaultValue={this.props.selectedProduct.description} />
+                        <input ref="description" className="form-control" type="text" defaultValue={this.props.selectedProduct.description} />
                     </td>
                 </tr>
                 <tr>
@@ -61,7 +65,7 @@ class ProductList extends React.Component {
                         Price
                     </td>
                     <td>
-                        <input className="form-control" type="number" defaultValue={this.props.selectedProduct.price} />
+                        <input ref="price" className="form-control" type="number" defaultValue={this.props.selectedProduct.price} />
                     </td>
                 </tr>
                 <tr>
@@ -69,7 +73,11 @@ class ProductList extends React.Component {
                         Created on
                     </td>
                     <td>
-                        <input className="form-control" readOnly type="text" defaultValue={this.props.selectedProduct.creation_date} />
+                        <input ref="created_on"
+                               className="form-control"
+                               readOnly
+                               type="text"
+                               defaultValue={this.props.selectedProduct.creation_date != '' ? this.props.selectedProduct.creation_date : new Date() } />
                     </td>
                 </tr>
                 </tbody>
@@ -83,15 +91,24 @@ class ProductList extends React.Component {
         );
     }
 
-    _confirmButton(){
+    _editButton(){
         return (
-            <button className='btn btn-success' onClick={() => this.closeModal()}>Confirm</button>
+            <button className='btn btn-success' onClick={() => {this.closeModal(); this.saveProduct()}}>Save</button>
+        );
+    }
+
+    _deleteButton(){
+        return (
+            <button className='btn btn-success' onClick={() => {this.confirmDelete(this.props.selectedProduct);  this.closeModal()}}>Delete</button>
         );
     }
 
     render(){
         return(
          <span>
+             <button className="btn btn-success btn-add" onClick={() => this.props.showAddModal()} ><span className="glyphicon glyphicon-plus"></span> Add Product</button>
+             <br />
+             <br />
              {this.props.products.map((product) =>
                  <Product key={product.id}
                           editProduct={(product) => this.editProduct(product)}
@@ -101,35 +118,95 @@ class ProductList extends React.Component {
              )}
 
              <Modal
-                 isOpen={this.props.detailsModal || this.props.editModal || this.props.deleteModal}
+                 isOpen={this.props.detailsModal || this.props.editModal || this.props.deleteModal || this.props.addModal}
                  contentLabel="Modal"
                  className='popup'
                  overlayClassName='popup-overlay'
              >
              <div className="text-center">
                 {this.props.detailsModal ? this._detailsModal() : null}
-                {this.props.editModal ? this._editModal(): null}
+                {(this.props.editModal || this.props.addModal) ? this._editModal(): null}
                 {this.props.deleteModal ? this._deleteModal(): null}
                 <button className='btn btn-danger' onClick={() => this.closeModal()}>Close</button>
-                {this.props.deleteModal || this.props.editModal ? this._confirmButton(): null}
+                {(this.props.editModal || this.props.addModal) ? this._editButton(): null}
+                {this.props.deleteModal ? this._deleteButton(): null}
              </div>
              </Modal>
          </span>
         );
     }
 
+    /* close the modal on button click */
     closeModal() {
         this.props.closeModal();
     }
 
+    /* deleting a selected product
+       param: selectedProduct from state / type: Product
+     */
     deleteProduct(product){
         this.props.selectStateProduct(product);
         this.props.showDeleteModal();
     }
+
+    confirmDelete(product){
+         this.props.removeArrayProduct(product);
+    }
+
+    /* edit selected product
+       param: selected product from state / type: Product
+     */
     editProduct(product){
         this.props.selectStateProduct(product);
         this.props.showEditModal();
     }
+
+    /* gives the MAX id from the products
+       param: none
+       return: integer
+     */
+    getMaxId(){
+      let maxId=-1;
+
+      this.props.products.map(function(obj){
+         if(obj.id>maxId) maxId=obj.id;
+      });
+
+      return maxId;
+    }
+
+    /* edits or adds a new product
+       if selected product is -1 a new product is being added, otherwise  it edits the already existing one
+       uses props.selectedProduct
+       param: none
+     */
+    saveProduct(){
+
+        let name= this.refs.name.value;
+        let description = this.refs.description.value;
+        let price = this.refs.price.value;
+        let created_on = this.refs.created_on.value;
+
+        //edit product
+        if(this.props.selectedProduct.id!=-1){
+            let editProduct = new Product(this.props.selectedProduct.id,name,description,price,created_on);
+            this.props.editProduct(editProduct);
+        }
+        //new product
+        else{
+            let id= this.getMaxId();
+            if(maxId==0)
+                return;
+
+            let newProduct= new Product(id,name,description,price,created_on);
+            if(newProduct.name!='')
+             this.props.addProduct(newProduct);
+        }
+    }
+
+    /* sets selected product in state
+       param: clicked product / type: Product
+     */
     selectProduct(product) {
         this.props.selectStateProduct(product);
         this.props.showDetailsModal();
@@ -141,6 +218,7 @@ const mapStateToProps = (state) => {
     return {
         products: state.products,
         selectedProduct: state.selectedProduct,
+        addModal: state.addModal,
         detailsModal: state.detailsModal,
         deleteModal: state.deleteModal,
         editModal: state.editModal,
@@ -149,14 +227,26 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        showAddModal: () => {
+            dispatch(showAddModal());
+        },
+        addProduct: (product) => {
+            dispatch(addProduct(product));
+        },
         showDetailsModal: () => {
             dispatch(showDetailsModal());
         },
         showEditModal: () => {
             dispatch(showEditModal());
         },
+        editProduct: (product) => {
+            dispatch(editProduct(product));
+        },
         showDeleteModal: () => {
             dispatch(showDeleteModal());
+        },
+        removeArrayProduct: (product) =>{
+            dispatch(removeArrayProduct(product));
         },
         selectStateProduct: (product) => {
             dispatch(selectStateProduct(product));

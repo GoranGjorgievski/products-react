@@ -3,6 +3,15 @@ import React from 'react'
 
 export default class Product extends React.Component{
 
+    constructor(id,name,description,price,creation_date){
+        super();
+        this.id=id;
+        this.name=name;
+        this.description=description;
+        this.price=price;
+        this.creation_date=creation_date;
+    }
+
     render(){
         return (
             <div className="container card col-md-6">

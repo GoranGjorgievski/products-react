@@ -1,3 +1,7 @@
+/**
+ * List of all names used in actions/reducers
+ * @type {string}
+ */
 export const SHOW_ADD_MODAL = 'show_add_modal';
 export const ADD_PRODUCT = 'add_product';
 export const SHOW_DETAILS_MODAL = 'show_details_modal';

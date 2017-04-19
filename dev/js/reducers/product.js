@@ -6,6 +6,11 @@ import {
     DESELECT_PRODUCT,
 } from '../actions/names';
 
+/**
+ * Initial state with 4 products
+ * @type {{products: [{id: number, price: number, name: string, description: string, creation_date: string}],
+ * selectedProduct: {id: number, price: number, name: string, description: string, creation_date: string}}}
+ */
 let INITIAL_STATE= {
     products: [
         {

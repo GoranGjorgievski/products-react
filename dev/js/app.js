@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import {connect} from "react-redux";
-import Header from "./components/app/Header";
-import Body from "./components/app/Body";
-import Footer from "./components/app/Footer";
+import Header from "./components/app/header";
+import Body from "./components/app/body";
+import Footer from "./components/app/footer";
 
 
-import '../css/App.css';
+import '../css/app.css';
 
 
 

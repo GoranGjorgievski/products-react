@@ -3,6 +3,13 @@ import React from 'react'
 
 export default class Product extends React.Component{
 
+    /**
+     * @param id (number)
+     * @param name (string)
+     * @param description (string)
+     * @param price (number)
+     * @param creation_date (string)
+     */
     constructor(id,name,description,price,creation_date){
         super();
         this.id=id;

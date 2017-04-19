@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import Product from './Product';
+import Product from './product';
 
 import Modal from 'react-modal';
 
@@ -19,6 +19,11 @@ import {
 
 class ProductList extends React.Component {
 
+     /**
+     * Body of the modal showing product details
+     * @returns {XML}
+     * @private
+     */
     _detailsModal() {
         return (
             <span>
@@ -31,6 +36,11 @@ class ProductList extends React.Component {
         );
     }
 
+     /**
+     * Body of the modal showing edit product
+     * @returns {XML}
+     * @private
+     */
     _editModal(){
         return (
             <table className="table table-hover table-striped">
@@ -86,18 +96,33 @@ class ProductList extends React.Component {
         );
     }
 
+     /**
+     * Body of the modal showing confirm delete product
+     * @returns {XML}
+     * @private
+     */
     _deleteModal(){
         return (
             <h3>Please confirm to delete this product</h3>
         );
     }
 
+     /**
+     * Edit button visible in add new product and edit product modals
+     * @returns {XML}
+     * @private
+     */
     _editButton(){
         return (
             <button className='btn btn-success' onClick={() => {this.saveProduct(); this.closeModal(); }}>Save</button>
         );
     }
 
+     /**
+     * Delete button for confirm delete modal
+     * @returns {XML}
+     * @private
+     */
     _deleteButton(){
         return (
             <button className='btn btn-success' onClick={() => {this.confirmDelete(this.props.selectedProduct);  this.closeModal()}}>Delete</button>
@@ -137,35 +162,43 @@ class ProductList extends React.Component {
         );
     }
 
-    /* close the modal on button click */
+     /**
+     * Closes modal on cancel click
+     */
     closeModal() {
         this.props.closeModal();
         this.props.deselectProduct();
     }
 
-    /* deleting a selected product
-       param: selectedProduct from state / type: Product
+     /**
+     * Selects product in state and shows confirm delete modal
+     * @param product (Object)
      */
     deleteProduct(product){
         this.props.selectStateProduct(product);
         this.props.showDeleteModal();
     }
 
+     /**
+     * Dispatches delete product from state array
+     * @param product (Object)
+     */
     confirmDelete(product){
          this.props.removeArrayProduct(product);
     }
 
-    /* edit selected product
-       param: selected product from state / type: Product
+     /**
+     * Selects product in state and shows edit modal
+     * @param product
      */
     editProduct(product){
         this.props.selectStateProduct(product);
         this.props.showEditModal();
     }
 
-    /* gives the MAX id from the products
-       param: none
-       return: integer
+     /**
+     * Returns the MAX id from the products
+     * @returns {number}
      */
     getMaxId(){
       let maxId=-1;
@@ -177,10 +210,10 @@ class ProductList extends React.Component {
       return maxId;
     }
 
-    /* edits or adds a new product
-       if selected product is -1 a new product is being added, otherwise  it edits the already existing one
-       uses props.selectedProduct
-       param: none
+     /**
+     * Edits or adds a new product.
+     If selected product is -1 a new product is being added, otherwise  it edits the already existing one
+     uses props.selectedProduct
      */
     saveProduct(){
 
@@ -189,12 +222,12 @@ class ProductList extends React.Component {
         let price = this.refs.price.value;
         let created_on = this.refs.created_on.value;
 
-        //edit product
+        //Edit product
         if(this.props.selectedProduct.id!=-1){
             let editProduct = new Product(this.props.selectedProduct.id,name,description,price,created_on);
             this.props.editProduct(editProduct);
         }
-        //new product
+        //New product
         else{
             let maxId= this.getMaxId()+1;
             if(maxId==0)
@@ -206,8 +239,9 @@ class ProductList extends React.Component {
         }
     }
 
-    /* sets selected product in state
-       param: clicked product / type: Product
+    /**
+     * Stores selected product in state
+     * @param product (Object)
      */
     selectProduct(product) {
         this.props.selectStateProduct(product);

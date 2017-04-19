@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import productsApp from './reducers';
-import App from './App';
+import { loadState, saveState } from './localStorage';
+import App from './app';
 import { createLogger } from 'redux-logger';
 
 const middlewares = [thunk];
@@ -14,7 +15,12 @@ if (true) {
     middlewares.push(logger);
 }
 
-let store = createStore(productsApp, applyMiddleware(...middlewares));
+let persistedState = loadState();
+let store = createStore(productsApp, persistedState, applyMiddleware(...middlewares));
+
+store.subscribe(() => {
+    saveState(store.getState());
+});
 
 ReactDOM.render(
     <Provider store={store}>

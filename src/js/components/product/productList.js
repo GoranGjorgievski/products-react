@@ -1,13 +1,20 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+
 import {connect} from 'react-redux';
 import Product from './product';
 
 import Modal from 'react-modal';
 
+import EditModal from '../modalContents/editModal';
+import DeleteModal from '../modalContents/deleteModal';
+
+
+
+
 import {
    showAddModal,
    addProduct,
-   showDetailsModal,
    selectStateProduct,
    closeModal,
    showEditModal,
@@ -15,110 +22,11 @@ import {
    showDeleteModal,
    removeArrayProduct,
    deselectProduct,
-} from '../../actions';
+} from '../../actions/index';
 
 class ProductList extends React.Component {
 
-     /**
-     * Body of the modal showing product details
-     * @returns {XML}
-     * @private
-     */
-    _detailsModal() {
-        return (
-            <span>
-                <h1 className="padding-15 text-capitalize text-warning">Details</h1>
-                <p className="padding-15"><b className=" pull-left">Name:</b> <i className="pull-right">{this.props.selectedProduct.name}</i></p>
-                <p className="padding-15"><b className=" pull-left">Description:</b> <i className="pull-right">{this.props.selectedProduct.description}</i></p>
-                <p className="padding-15"><b className=" pull-left">Price:</b> <i className="pull-right">{this.props.selectedProduct.price}</i></p>
-                <p className="padding-15"><b className=" pull-left">Added on:</b> <i className="pull-right">{this.props.selectedProduct.creation_date}</i></p>
-            </span>
-        );
-    }
-
-     /**
-     * Body of the modal showing edit product
-     * @returns {XML}
-     * @private
-     */
-    _editModal(){
-        return (
-            <table className="table table-hover table-striped">
-                <thead>
-                <tr>
-                    <th className="text-right">
-                        Property
-                    </th>
-                    <th className="text-center">
-                        Value
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td className="text-right">
-                        Name
-                    </td>
-                    <td>
-                        <input ref="name" className="form-control" type="text" defaultValue={this.props.selectedProduct.name} />
-                    </td>
-                </tr>
-                <tr>
-                    <td className="text-right">
-                        Description
-                    </td>
-                    <td>
-                        <input ref="description" className="form-control" type="text" defaultValue={this.props.selectedProduct.description} />
-                    </td>
-                </tr>
-                <tr>
-                    <td className="text-right">
-                        Price
-                    </td>
-                    <td>
-                        <input ref="price" className="form-control" type="number" defaultValue={this.props.selectedProduct.price} />
-                    </td>
-                </tr>
-                <tr>
-                    <td className="text-right">
-                        Created on
-                    </td>
-                    <td>
-                        <input ref="created_on"
-                               className="form-control"
-                               readOnly
-                               type="text"
-                               defaultValue={this.props.selectedProduct.creation_date != '' ? this.props.selectedProduct.creation_date : new Date() } />
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        );
-    }
-
-     /**
-     * Body of the modal showing confirm delete product
-     * @returns {XML}
-     * @private
-     */
-    _deleteModal(){
-        return (
-            <h3>Please confirm to delete this product</h3>
-        );
-    }
-
-     /**
-     * Edit button visible in add new product and edit product modals
-     * @returns {XML}
-     * @private
-     */
-    _editButton(){
-        return (
-            <button className='btn btn-success' onClick={() => {this.saveProduct(); this.closeModal(); }}>Save</button>
-        );
-    }
-
-     /**
+    /**
      * Delete button for confirm delete modal
      * @returns {XML}
      * @private
@@ -128,6 +36,19 @@ class ProductList extends React.Component {
             <button className='btn btn-success' onClick={() => {this.confirmDelete(this.props.selectedProduct);  this.closeModal()}}>Delete</button>
         );
     }
+
+    /**
+     * Edit button visible in add new product and edit product modals
+     * @returns {XML}
+     * @private
+     */
+
+    _editButton(){
+            return (
+                <button className='btn btn-success' onClick={() => {this.saveProduct(); this.closeModal(); }}>Save</button>
+            );
+    }
+
 
     render(){
         return(
@@ -144,15 +65,14 @@ class ProductList extends React.Component {
              )}
 
              <Modal
-                 isOpen={this.props.detailsModal || this.props.editModal || this.props.deleteModal || this.props.addModal}
+                 isOpen={this.props.editModal || this.props.deleteModal || this.props.addModal}
                  contentLabel="Modal"
                  className='popup'
                  overlayClassName='popup-overlay'
              >
              <div className="text-center">
-                {this.props.detailsModal ? this._detailsModal() : null}
-                {(this.props.editModal || this.props.addModal) ? this._editModal(): null}
-                {this.props.deleteModal ? this._deleteModal(): null}
+                {(this.props.editModal || this.props.addModal) ? <EditModal selectedProduct={this.props.selectedProduct} /> : null}
+                {this.props.deleteModal ? <DeleteModal selectedProduct={this.props.selectedProduct} /> : null}
                 <button className='btn btn-danger' onClick={() => this.closeModal()}>Close</button>
                 {(this.props.editModal || this.props.addModal) ? this._editButton(): null}
                 {this.props.deleteModal ? this._deleteButton(): null}
@@ -217,10 +137,10 @@ class ProductList extends React.Component {
      */
     saveProduct(){
 
-        let name= this.refs.name.value;
-        let description = this.refs.description.value;
-        let price = this.refs.price.value;
-        let created_on = this.refs.created_on.value;
+        let name= document.getElementById('name').value;
+        let description = document.getElementById('description').value;
+        let price = document.getElementById('price').value;
+        let created_on = document.getElementById('created_on').value;
 
         //Edit product
         if(this.props.selectedProduct.id!=-1){
@@ -255,7 +175,6 @@ const mapStateToProps = (state) => {
         products: state.product.products,
         selectedProduct: state.product.selectedProduct,
         addModal: state.modals.addModal,
-        detailsModal: state.modals.detailsModal,
         deleteModal: state.modals.deleteModal,
         editModal: state.modals.editModal,
     };
@@ -268,9 +187,6 @@ const mapDispatchToProps = (dispatch) => {
         },
         addProduct: (product) => {
             dispatch(addProduct(product));
-        },
-        showDetailsModal: () => {
-            dispatch(showDetailsModal());
         },
         showEditModal: () => {
             dispatch(showEditModal());

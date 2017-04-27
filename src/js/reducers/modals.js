@@ -1,6 +1,5 @@
 import {
     SHOW_ADD_MODAL,
-    SHOW_DETAILS_MODAL,
     CLOSE_MODAL,
     SHOW_EDIT_MODAL,
     SHOW_DELETE_MODAL,
@@ -9,7 +8,6 @@ import {
 
 let INITIAL_STATE= {
     addModal: false,
-    detailsModal: false,
     deleteModal: false,
     editModal: false,
 };
@@ -23,11 +21,6 @@ export default (state=INITIAL_STATE, action) =>{
                 addModal: true,
             };
 
-        case SHOW_DETAILS_MODAL:
-            return {
-                ...state,
-                detailsModal: true,
-            };
 
         case SHOW_EDIT_MODAL:
             return {

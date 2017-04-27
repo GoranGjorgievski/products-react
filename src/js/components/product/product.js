@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from  'react-router';
 
 
 export default class Product extends React.Component{
@@ -38,7 +39,7 @@ export default class Product extends React.Component{
 
                                 <div className="col-md-12 panelBottom">
                                     <div className="col-md-4 text-center">
-                                        <button onClick={this.props.selectProduct.bind(this,this.props.product)} className="btn btn-info"><span className="glyphicon glyphicon-info-sign"></span>  Details </button>
+                                        <Link className="btn btn-info" to={`/p/${this.props.product.id}`}><span className="glyphicon glyphicon-info-sign"></span>  View Details </Link>
                                     </div>
                                     <div className="col-md-4 text-center">
                                         <button onClick={this.props.editProduct.bind(this,this.props.product)} className="btn btn-warning"><span className="glyphicon glyphicon-edit"></span>   Edit</button>
@@ -51,6 +52,7 @@ export default class Product extends React.Component{
                         </div>
                     </div>
                 </div>
+
             </div>
         );
     }

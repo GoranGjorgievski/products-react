@@ -14,13 +14,6 @@ export const showAddModal = () => {
 };
 
 
-
-export const showDetailsModal= ()=>{
-    return {
-        type: SHOW_DETAILS_MODAL,
-    };
-};
-
 export const showEditModal= ()=>{
     return {
         type: SHOW_EDIT_MODAL,
@@ -33,7 +26,6 @@ export const showDeleteModal= ()=>{
         type: SHOW_DELETE_MODAL,
     };
 };
-
 
 
 
